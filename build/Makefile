@@ -14,10 +14,10 @@ EQ            = =
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_MULTIMEDIA_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -std=gnu++11 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -Imoc -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
+INCPATH       = -I. -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -Imoc -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 QMAKE         = /usr/lib/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -40,7 +40,7 @@ DISTNAME      = app1.0.0
 DISTDIR = /home/ramcel/PROJECTS/Songer/build/obj/app1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
-LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lGL -lpthread   
+LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Multimedia.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Network.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lGL -lpthread   
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -57,13 +57,15 @@ SOURCES       = ../src/main.cpp \
 		../src/header_section.cpp \
 		../src/content_section.cpp \
 		../src/footer_section.cpp \
-		../src/sidebar_section.cpp 
+		../src/sidebar_section.cpp \
+		../src/musicplayer.cpp 
 OBJECTS       = obj/main.o \
 		obj/window_setup.o \
 		obj/header_section.o \
 		obj/content_section.o \
 		obj/footer_section.o \
-		obj/sidebar_section.o
+		obj/sidebar_section.o \
+		obj/musicplayer.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -152,7 +154,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../src/header_section.cpp \
 		../src/content_section.cpp \
 		../src/footer_section.cpp \
-		../src/sidebar_section.cpp
+		../src/sidebar_section.cpp \
+		../src/musicplayer.cpp
 QMAKE_TARGET  = app
 DESTDIR       = 
 TARGET        = app
@@ -341,7 +344,7 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../headers/window_setup.h ../headers/header_section.h ../headers/content_section.h ../headers/footer_section.h ../headers/sidebar_section.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../src/main.cpp ../src/window_setup.cpp ../src/header_section.cpp ../src/content_section.cpp ../src/footer_section.cpp ../src/sidebar_section.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../src/main.cpp ../src/window_setup.cpp ../src/header_section.cpp ../src/content_section.cpp ../src/footer_section.cpp ../src/sidebar_section.cpp ../src/musicplayer.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -403,7 +406,8 @@ obj/header_section.o: ../src/header_section.cpp ../headers/header_section.h
 
 obj/content_section.o: ../src/content_section.cpp ../headers/content_section.h \
 		../headers/footer_section.h \
-		../headers/sidebar_section.h
+		../headers/sidebar_section.h \
+		../headers/musicplayer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/content_section.o ../src/content_section.cpp
 
 obj/footer_section.o: ../src/footer_section.cpp ../headers/footer_section.h
@@ -411,6 +415,9 @@ obj/footer_section.o: ../src/footer_section.cpp ../headers/footer_section.h
 
 obj/sidebar_section.o: ../src/sidebar_section.cpp ../headers/sidebar_section.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/sidebar_section.o ../src/sidebar_section.cpp
+
+obj/musicplayer.o: ../src/musicplayer.cpp ../headers/musicplayer.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/musicplayer.o ../src/musicplayer.cpp
 
 ####### Install
 

@@ -1,6 +1,7 @@
 #include "../headers/content_section.h"
 #include "../headers/footer_section.h"
 #include "../headers/sidebar_section.h"
+#include "../headers/musicplayer.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QFrame>
@@ -15,6 +16,11 @@ QLayout* createContentSection(QWidget *parent) {
     QHBoxLayout *mainContentLayout = new QHBoxLayout;
     mainContentLayout->setSpacing(10);
     mainContentLayout->setContentsMargins(0, 0, 0, 0);
+
+
+    QWidget *musicPlayerWidget = createMusicPlayer(parent);
+    QMediaPlayer *player = musicPlayerWidget->findChild<QMediaPlayer*>();
+
 
     // Left Section with footer
     QWidget *leftContainer = new QWidget;
@@ -45,7 +51,6 @@ QLayout* createContentSection(QWidget *parent) {
     QString buttonStyle = 
         "QPushButton {"
         "   background-color: #1a0940;"
-        "   border: 1px solid #3A5F8E;"
         "   border-radius: 25px;"
         "   padding: 5px 10px;"
         "   max-width:40px;"
@@ -67,9 +72,15 @@ QLayout* createContentSection(QWidget *parent) {
         btn->setStyleSheet(buttonStyle);
         controlsLayout->addWidget(btn);
     }
+    connectPlayButton(playBtn, player);
+    connectPauseButton(pauseBtn, player);
+    connectPrevButton(prevBtn, player);
+    connectNextButton(nextBtn, player);
 
+    
     controls->setLayout(controlsLayout);
     contentLayout->addWidget(controls);
+    contentLayout->addWidget(createMusicPlayer(parent));
 
     // Add main content to layout
     leftContainerLayout->addWidget(contentFrame, 8);
@@ -77,6 +88,7 @@ QLayout* createContentSection(QWidget *parent) {
 
     mainContentLayout->addWidget(leftContainer, 1);
     mainContentLayout->addWidget(createSidebar(parent));
+
 
     return mainContentLayout;
 }

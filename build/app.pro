@@ -1,11 +1,12 @@
-QT += widgets
+QT += widgets multimedia
 TARGET = app
 SOURCES = ../src/main.cpp \
           ../src/window_setup.cpp \
           ../src/header_section.cpp \
           ../src/content_section.cpp \
           ../src/footer_section.cpp \
-          ../src/sidebar_section.cpp
+          ../src/sidebar_section.cpp\
+          ../src/musicplayer.cpp
 HEADERS = ../headers/window_setup.h \
           ../headers/header_section.h \
           ../headers/content_section.h \

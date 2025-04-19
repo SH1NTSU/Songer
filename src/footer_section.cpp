@@ -3,6 +3,7 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QLabel>
+#include <QDebug>
 
 QFrame* createFooterSection(QWidget *parent) {
     QFrame *footer = new QFrame(parent);
@@ -14,19 +15,16 @@ QFrame* createFooterSection(QWidget *parent) {
         "   color: white;"
         "}"
     );
-    footer->setFixedHeight(140); // ✅ Safe fallback for now
-
+    footer->setFixedHeight(140);
 
     QHBoxLayout *footerLayout = new QHBoxLayout(footer);
     footerLayout->setContentsMargins(10, 10, 10, 10);
     footerLayout->setSpacing(40);
 
-    // Slider setup
-    int value = 50;
-
+    // Slider setup (FIXED: No unsafe capture)
     QSlider *volume = new QSlider(Qt::Horizontal);
     volume->setRange(0, 100);
-    volume->setValue(value);
+    volume->setValue(50);  // Default volume
     volume->setFixedWidth(200);
     volume->setStyleSheet(
         "QSlider::groove:horizontal {"
@@ -35,42 +33,42 @@ QFrame* createFooterSection(QWidget *parent) {
         "    background: #1a0940;"
         "    border-radius: 4px;"
         "}"
-    
         "QSlider::handle:horizontal {"
-        "    background: #5C8DFF;"
+        "    background:rgb(197, 219, 7);"
         "    border: 1px solid #3A5F8E;"
         "    width: 18px;"
         "    height: 18px;"
         "    margin: -5px 0;"
         "    border-radius: 9px;"
         "}"
-    
         "QSlider::sub-page:horizontal {"
-        "    background: #5C8DFF;"
+        "    background: rgb(197, 219, 7);"
         "    border-radius: 4px;"
         "}"
-    
         "QSlider::add-page:horizontal {"
         "    background: #3A5F8E;"
         "    border-radius: 4px;"
         "}"
     );
-    QObject::connect(volume, &QSlider::valueChanged, [&value](int newValue) {
-        value = newValue;
+
+    // Safe connection (no capture needed)
+    QObject::connect(volume, &QSlider::valueChanged, [](int newValue) {
+        qDebug() << "Volume set to:" << newValue;  // Optional debug
     });
+
+    // Rest of your code (buttons, labels, etc.)...
     QString buttonStyle = 
-    "QPushButton {"
-    "   background-color: #1a0940;"
-    "   border: 1px solid #3A5F8E;"
-    "   border-radius: 25px;"
-    "   padding: 5px 10px;"
-    "   max-width:40px;"
-    "   min-height:40px;"
-    "   color: white;"
-    "}"
-    "QPushButton:hover {"
-    "   background-color: #2D4F8B;"
-    "}";
+        "QPushButton {"
+        "   background-color: #1a0940;" 
+        "   border-radius: 25px;"
+        "   padding: 5px 10px;"
+        "   max-width:40px;"
+        "   min-height:40px;"
+        "   color: white;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #2D4F8B;"
+        "}";
 
     QFrame *ButtonsBlock = new QFrame;
     ButtonsBlock->setFrameStyle(QFrame::Panel | QFrame::Raised);
@@ -79,14 +77,15 @@ QFrame* createFooterSection(QWidget *parent) {
 
     QHBoxLayout *ButtonsLayout = new QHBoxLayout;
     QPushButton *favorite = new QPushButton("♥️");
-    QPushButton *restartBtn = new QPushButton(QString::fromUtf8("\U0001F501"));// 🔁
-    QPushButton *stopBtn    = new QPushButton(QString::fromUtf8("\u23F9"));   // ⏹️
+    QPushButton *restartBtn = new QPushButton(QString::fromUtf8("\U0001F501")); // 🔁
+    QPushButton *stopBtn    = new QPushButton(QString::fromUtf8("\u23F9"));    // ⏹️
     QList<QPushButton*> buttons = {favorite, restartBtn, stopBtn};
-    for (QPushButton *btn : buttons ) {
+    
+    for (QPushButton *btn : buttons) {
         btn->setFixedSize(40, 40);
         btn->setStyleSheet(buttonStyle);
         ButtonsLayout->addWidget(btn);
-    };
+    }
     ButtonsBlock->setLayout(ButtonsLayout);
 
     QFrame *textBlock = new QFrame;
@@ -106,15 +105,11 @@ QFrame* createFooterSection(QWidget *parent) {
     textLayout->addWidget(line1);
     textLayout->addWidget(line2);
     textLayout->addWidget(line3);
-
     textBlock->setLayout(textLayout);
-
 
     footerLayout->addWidget(volume);
     footerLayout->addWidget(textBlock);
     footerLayout->addWidget(ButtonsBlock);
-
-
 
     return footer;
 }
