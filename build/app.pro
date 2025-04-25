@@ -1,4 +1,4 @@
-QT += widgets multimedia
+QT += core gui widgets multimedia
 TARGET = app
 SOURCES = ../src/main.cpp \
           ../src/window_setup.cpp \

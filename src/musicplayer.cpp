@@ -1,5 +1,5 @@
 #include <QMediaPlayer>
-#include <QMediaPlaylist>
+#include <QAudioOutput>  // Required in Qt6
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -20,16 +20,19 @@ QWidget* createMusicPlayer(QWidget *parent) {
 
     // Time label
     QLabel *timeLabel = new QLabel("00:00");
-    timeLabel->setStyleSheet("color: white; font-size: 16px;");
     layout->addWidget(timeLabel, 0, Qt::AlignHCenter);
 
-    // Create player
+    // Create player and audio output (Qt6 requires this)
     QMediaPlayer *player = new QMediaPlayer(container);
-    player->setMedia(QUrl::fromLocalFile("../songs/RatherLie.mp3"));
-    player->setVolume(50);
+    QAudioOutput *audioOutput = new QAudioOutput(container);
+    player->setAudioOutput(audioOutput);  // Must set audio output first
+    
+    // Set media and volume
+    player->setSource(QUrl::fromLocalFile("../songs/RatherLie.mp3"));  // Changed from setMedia
+    audioOutput->setVolume(0.5);  // Volume is now 0.0-1.0 (50% = 0.5)
     player->play();
 
-    // Timer to update time
+    // Timer to update time (unchanged)
     QTimer *timer = new QTimer(container);
     QObject::connect(timer, &QTimer::timeout, [=]() {
         int ms = player->position();
@@ -44,6 +47,8 @@ QWidget* createMusicPlayer(QWidget *parent) {
 
     return container;
 }
+
+// Updated button connection functions
 void connectPlayButton(QPushButton *button, QMediaPlayer *player) {
     QObject::connect(button, &QPushButton::clicked, [=]() {
         player->play();
@@ -58,12 +63,12 @@ void connectPauseButton(QPushButton *button, QMediaPlayer *player) {
 
 void connectPrevButton(QPushButton *button, QMediaPlayer *player) {
     QObject::connect(button, &QPushButton::clicked, [=]() {
-        player->setPosition(0);  // Go to beginning
+        player->setPosition(0);
     });
 }
 
 void connectNextButton(QPushButton *button, QMediaPlayer *player) {
     QObject::connect(button, &QPushButton::clicked, [=]() {
-        player->setPosition(player->duration());  // Skip to end
+        player->setPosition(player->duration());
     });
 }
