@@ -1,17 +1,23 @@
 [
-    {
-        "name": "Playboi Carti & The Weeknd - RATHER LIE (Official Audio)",
-        "path": "songs/Playboi Carti & The Weeknd - RATHER LIE (Official Audio).mp3",
-        "time": "3:30"
-    },
-    {
-        "name": "The End - LLow",
-        "path": "songs/The End - LLow.mp3",
-        "time": "2:05"
-    },
-    {
-        "name": "Travis Scott - MY EYES (Official Audio)",
-        "path": "songs/Travis Scott - MY EYES (Official Audio).mp3",
-        "time": "4:12"
-    }
+  {
+    "name": "Playboi Carti & The Weeknd - RATHER LIE (Official Audio)",
+    "path": "/home/vanitas/Work/Projects/Songer/songs/RatherLie.mp3",
+    "artist": "Playboi Carti",
+    "imgages": "/home/vanitas/Work/Projects/Songerssets/RatherLie.webp",
+    "time": "3:30"
+  },
+  {
+    "name": "The End - LLow",
+    "artist": "LLow",
+    "path": "/home/vanitas/Work/Projects/Songer/songs/The End - LLow.mp3",
+    "imgages": "/home/vanitas/Work/Projects/Songerssets/TheEnd.webp",
+    "time": "2:05"
+  },
+  {
+    "name": "Travis Scott - MY EYES (Official Audio)",
+    "artist": "Travis Scott",
+    "path": "/home/vanitas/Work/Projects/Songer/songs/Travis Scott - MY EYES (Official Audio).mp3",
+    "imgages": "/home/vanitas/Work/Projects/Songer/assets/MyEyes.webp",
+    "time": "4:12"
+  }
 ]

@@ -57,9 +57,9 @@ QFrame* createFooterSection(QWidget *parent) {
     });
 
     // Rest of your code (buttons, labels, etc.)...
-    QString buttonStyle = 
+    QString buttonStyle =
         "QPushButton {"
-        "   background-color: #1a0940;" 
+        "   background-color: #1a0940;"
         "   border-radius: 25px;"
         "   padding: 5px 10px;"
         "   max-width:40px;"
@@ -80,7 +80,7 @@ QFrame* createFooterSection(QWidget *parent) {
     QPushButton *restartBtn = new QPushButton(QString::fromUtf8("\U0001F501")); // 🔁
     QPushButton *stopBtn    = new QPushButton(QString::fromUtf8("\u23F9"));    // ⏹️
     QList<QPushButton*> buttons = {favorite, restartBtn, stopBtn};
-    
+
     for (QPushButton *btn : buttons) {
         btn->setFixedSize(40, 40);
         btn->setStyleSheet(buttonStyle);

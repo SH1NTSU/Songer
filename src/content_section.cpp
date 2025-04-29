@@ -7,20 +7,17 @@
 #include <QFrame>
 #include <QWidget>
 #include <QPushButton>
-#include <QVBoxLayout>
-
-
-
+#include <QLabel>  // Add this include
 
 QLayout* createContentSection(QWidget *parent) {
     QHBoxLayout *mainContentLayout = new QHBoxLayout;
     mainContentLayout->setSpacing(10);
     mainContentLayout->setContentsMargins(0, 0, 0, 0);
 
-
+    // Create music player and get its components
     QWidget *musicPlayerWidget = createMusicPlayer(parent);
     QMediaPlayer *player = musicPlayerWidget->findChild<QMediaPlayer*>();
-
+    QLabel *songInfoLabel = musicPlayerWidget->findChild<QLabel*>(); // Find the song info label
 
     // Left Section with footer
     QWidget *leftContainer = new QWidget;
@@ -46,9 +43,10 @@ QLayout* createContentSection(QWidget *parent) {
     QFrame *controls = new QFrame;
     controls->setStyleSheet("color: white;");
     controls->setFixedSize(250,80);
-    QHBoxLayout *controlsLayout = new QHBoxLayout; // horizontal layout
+    QHBoxLayout *controlsLayout = new QHBoxLayout;
     controlsLayout->setSpacing(10);
-    QString buttonStyle = 
+
+    QString buttonStyle =
         "QPushButton {"
         "   background-color: #1a0940;"
         "   border-radius: 25px;"
@@ -61,26 +59,26 @@ QLayout* createContentSection(QWidget *parent) {
         "   background-color: #2D4F8B;"
         "}";
 
-    QPushButton *prevBtn    = new QPushButton(QString::fromUtf8("\u23EE"));   // ⏮️
-    QPushButton *pauseBtn   = new QPushButton(QString::fromUtf8("\u23F8"));   // ⏸️
-    QPushButton *playBtn    = new QPushButton(QString::fromUtf8("\u25B6"));   // ▶️
-    QPushButton *nextBtn    = new QPushButton(QString::fromUtf8("\u23ED"));   // ⏭️
+    QPushButton *prevBtn = new QPushButton(QString::fromUtf8("\u23EE"));
+    QPushButton *pauseBtn = new QPushButton(QString::fromUtf8("\u23F8"));
+    QPushButton *playBtn = new QPushButton(QString::fromUtf8("\u25B6"));
+    QPushButton *nextBtn = new QPushButton(QString::fromUtf8("\u23ED"));
 
-
-    QList<QPushButton*> buttons = { prevBtn, pauseBtn, playBtn,nextBtn };
+    QList<QPushButton*> buttons = { prevBtn, pauseBtn, playBtn, nextBtn };
     for (QPushButton* btn : buttons) {
         btn->setStyleSheet(buttonStyle);
         controlsLayout->addWidget(btn);
     }
+
+    // Connect buttons with all required parameters
     connectPlayButton(playBtn, player);
     connectPauseButton(pauseBtn, player);
-    connectPrevButton(prevBtn, player);
-    connectNextButton(nextBtn, player);
+    connectPrevButton(prevBtn, player, songInfoLabel);  // Added songInfoLabel
+    connectNextButton(nextBtn, player, songInfoLabel);  // Added songInfoLabel
 
-    
     controls->setLayout(controlsLayout);
     contentLayout->addWidget(controls);
-    contentLayout->addWidget(createMusicPlayer(parent));
+    contentLayout->addWidget(musicPlayerWidget);  // Use the existing widget instead of creating new one
 
     // Add main content to layout
     leftContainerLayout->addWidget(contentFrame, 8);
@@ -88,7 +86,6 @@ QLayout* createContentSection(QWidget *parent) {
 
     mainContentLayout->addWidget(leftContainer, 1);
     mainContentLayout->addWidget(createSidebar(parent));
-
 
     return mainContentLayout;
 }

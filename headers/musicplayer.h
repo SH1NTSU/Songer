@@ -4,14 +4,12 @@
 #include <QWidget>
 #include <QMediaPlayer>
 #include <QPushButton>
+#include <QLabel>
 
-// Function to create the music player widget
 QWidget* createMusicPlayer(QWidget *parent = nullptr);
-
-// Functions to connect player controls
 void connectPlayButton(QPushButton *button, QMediaPlayer *player);
 void connectPauseButton(QPushButton *button, QMediaPlayer *player);
-void connectPrevButton(QPushButton *button, QMediaPlayer *player);
-void connectNextButton(QPushButton *button, QMediaPlayer *player);
+void connectPrevButton(QPushButton *button, QMediaPlayer *player, QLabel *songInfoLabel);
+void connectNextButton(QPushButton *button, QMediaPlayer *player, QLabel *songInfoLabel);
 
 #endif // MUSICPLAYER_H
