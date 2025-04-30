@@ -94,9 +94,9 @@ QFrame* createFooterSection(QWidget *parent) {
     textBlock->setStyleSheet("color: white;");
 
     QVBoxLayout *textLayout = new QVBoxLayout;
-    QLabel *line1 = new QLabel("Top Text");
-    QLabel *line2 = new QLabel("Middle Text");
-    QLabel *line3 = new QLabel("Bottom Text");
+    QLabel *line1 = new QLabel("name");
+    QLabel *line2 = new QLabel("artist");
+    QLabel *line3 = new QLabel("duration");
 
     line1->setStyleSheet("color: white;");
     line2->setStyleSheet("color: white;");
