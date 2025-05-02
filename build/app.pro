@@ -12,7 +12,10 @@ HEADERS = ../headers/window_setup.h \
           ../headers/content_section.h \
           ../headers/footer_section.h \
           ../headers/sidebar_section.h
-# Additional configuration
+# Additional configuratio
+INCLUDEPATH += /usr/include/taglib
+LIBS += -ltag
+
 CONFIG += c++11
 DESTDIR = ./
 OBJECTS_DIR = obj

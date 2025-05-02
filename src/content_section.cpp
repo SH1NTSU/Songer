@@ -17,7 +17,7 @@ QLayout* createContentSection(QWidget *parent) {
     // Create music player and get its components
     QWidget *musicPlayerWidget = createMusicPlayer(parent);
     QMediaPlayer *player = musicPlayerWidget->findChild<QMediaPlayer*>();
-    QLabel *songInfoLabel = musicPlayerWidget->findChild<QLabel*>(); // Find the song info label
+    QLabel *coverImageLabel = musicPlayerWidget->findChild<QLabel*>("coverImage"); // Find the song info label
 
     // Left Section with footer
     QWidget *leftContainer = new QWidget;
@@ -63,8 +63,8 @@ QLayout* createContentSection(QWidget *parent) {
     QPushButton *pauseBtn = new QPushButton(QString::fromUtf8("\u23F8"));
     QPushButton *playBtn = new QPushButton(QString::fromUtf8("\u25B6"));
     QPushButton *nextBtn = new QPushButton(QString::fromUtf8("\u23ED"));
-
-    QList<QPushButton*> buttons = { prevBtn, pauseBtn, playBtn, nextBtn };
+    QPushButton *shuffleBtn = new QPushButton(QString::fromUtf8("\xF0\x9F\x94\x80"));
+    QList<QPushButton*> buttons = { prevBtn, pauseBtn, playBtn, nextBtn, shuffleBtn };
     for (QPushButton* btn : buttons) {
         btn->setStyleSheet(buttonStyle);
         controlsLayout->addWidget(btn);
@@ -73,8 +73,9 @@ QLayout* createContentSection(QWidget *parent) {
     // Connect buttons with all required parameters
     connectPlayButton(playBtn, player);
     connectPauseButton(pauseBtn, player);
-    connectPrevButton(prevBtn, player, songInfoLabel);  // Added songInfoLabel
-    connectNextButton(nextBtn, player, songInfoLabel);  // Added songInfoLabel
+    connectPrevButton(prevBtn, player, coverImageLabel);  // Added coverImageLabel
+    connectNextButton(nextBtn, player, coverImageLabel);  // Added coverImageLabel
+    shuffleButton(shuffleBtn, player, coverImageLabel);  // Added coverImageLabel
 
     controls->setLayout(controlsLayout);
     contentLayout->addWidget(controls);
@@ -82,7 +83,7 @@ QLayout* createContentSection(QWidget *parent) {
 
     // Add main content to layout
     leftContainerLayout->addWidget(contentFrame, 8);
-    leftContainerLayout->addWidget(createFooterSection(parent), 2);
+    leftContainerLayout->addWidget(createFooterSection(parent, player), 2);
 
     mainContentLayout->addWidget(leftContainer, 1);
     mainContentLayout->addWidget(createSidebar(parent));

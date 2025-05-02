@@ -2,7 +2,7 @@
 #define FOOTER_SECTION_H
 
 #include <QFrame>
-
-QFrame* createFooterSection(QWidget *parent);
+#include <QMediaPlayer>
+QFrame* createFooterSection(QWidget *parent, QMediaPlayer *player);
 
 #endif

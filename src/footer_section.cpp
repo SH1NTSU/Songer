@@ -1,11 +1,34 @@
 #include "../headers/footer_section.h"
+#include "../headers/musicplayer.h"
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QSlider>
 #include <QLabel>
+#include <QJsonObject>
 #include <QDebug>
+#include <QMediaPlayer>
+#include <iostream>
 
-QFrame* createFooterSection(QWidget *parent) {
+// Forward declarations
+extern int currentSongIndex;
+extern QList<QJsonObject> songsList;
+
+// Global footer widgets
+static QLabel *songNameLabel = nullptr;
+static QLabel *artistLabel = nullptr;
+static QLabel *durationLabel = nullptr;
+
+// Function to update footer labels
+void updateFooter() {
+    if (!songsList.isEmpty() && currentSongIndex >= 0 && currentSongIndex < songsList.size()) {
+        const QJsonObject &song = songsList.at(currentSongIndex);
+        if (songNameLabel) songNameLabel->setText(song["name"].toString());
+        if (artistLabel) artistLabel->setText(song["artist"].toString());
+        if (durationLabel) durationLabel->setText(song["time"].toString());
+    }
+}
+
+QFrame* createFooterSection(QWidget *parent ,QMediaPlayer *player) {
     QFrame *footer = new QFrame(parent);
     footer->setStyleSheet(
         "QFrame {"
@@ -21,10 +44,10 @@ QFrame* createFooterSection(QWidget *parent) {
     footerLayout->setContentsMargins(10, 10, 10, 10);
     footerLayout->setSpacing(40);
 
-    // Slider setup (FIXED: No unsafe capture)
+    // Slider setup
     QSlider *volume = new QSlider(Qt::Horizontal);
     volume->setRange(0, 100);
-    volume->setValue(50);  // Default volume
+    volume->setValue(50);
     volume->setFixedWidth(200);
     volume->setStyleSheet(
         "QSlider::groove:horizontal {"
@@ -51,12 +74,9 @@ QFrame* createFooterSection(QWidget *parent) {
         "}"
     );
 
-    // Safe connection (no capture needed)
-    QObject::connect(volume, &QSlider::valueChanged, [](int newValue) {
-        qDebug() << "Volume set to:" << newValue;  // Optional debug
-    });
+    QObject::connect(volume, &QSlider::valueChanged, player, &QMediaPlayer::setVolume);
 
-    // Rest of your code (buttons, labels, etc.)...
+    // Buttons
     QString buttonStyle =
         "QPushButton {"
         "   background-color: #1a0940;"
@@ -77,9 +97,9 @@ QFrame* createFooterSection(QWidget *parent) {
 
     QHBoxLayout *ButtonsLayout = new QHBoxLayout;
     QPushButton *favorite = new QPushButton("♥️");
-    QPushButton *restartBtn = new QPushButton(QString::fromUtf8("\U0001F501")); // 🔁
-    QPushButton *stopBtn    = new QPushButton(QString::fromUtf8("\u23F9"));    // ⏹️
-    QList<QPushButton*> buttons = {favorite, restartBtn, stopBtn};
+    QPushButton *loopBtn = new QPushButton(QString::fromUtf8("\U0001F501"));
+    QPushButton *startBtn    = new QPushButton(QString::fromUtf8("\u23F9"));
+    QList<QPushButton*> buttons = {favorite, startBtn, loopBtn};
 
     for (QPushButton *btn : buttons) {
         btn->setFixedSize(40, 40);
@@ -88,28 +108,42 @@ QFrame* createFooterSection(QWidget *parent) {
     }
     ButtonsBlock->setLayout(ButtonsLayout);
 
+    // Song info labels
     QFrame *textBlock = new QFrame;
-    textBlock->setFrameStyle(QFrame::Panel | QFrame::Raised);
-    textBlock->setLineWidth(2);
-    textBlock->setStyleSheet("color: white;");
+        textBlock->setFrameStyle(QFrame::Panel | QFrame::Raised);
+        textBlock->setLineWidth(2);
+        textBlock->setStyleSheet("color: white;");
 
-    QVBoxLayout *textLayout = new QVBoxLayout;
-    QLabel *line1 = new QLabel("name");
-    QLabel *line2 = new QLabel("artist");
-    QLabel *line3 = new QLabel("duration");
+        QVBoxLayout *textLayout = new QVBoxLayout;
 
-    line1->setStyleSheet("color: white;");
-    line2->setStyleSheet("color: white;");
-    line3->setStyleSheet("color: white;");
+        // Initialize the global labels
+        songNameLabel = new QLabel;
+        artistLabel = new QLabel;
+        durationLabel = new QLabel;
 
-    textLayout->addWidget(line1);
-    textLayout->addWidget(line2);
-    textLayout->addWidget(line3);
-    textBlock->setLayout(textLayout);
+        // Set initial song info
+        updateFooter();
+
+        songNameLabel->setStyleSheet("color: white; font-weight: bold;");
+        artistLabel->setStyleSheet("color: white;");
+        durationLabel->setStyleSheet("color: white;");
+
+        startButton(startBtn, player);
+        loopButton(loopBtn, player);  // Added coverImageLabel
+
+        textLayout->addWidget(songNameLabel);
+        textLayout->addWidget(artistLabel);
+        textLayout->addWidget(durationLabel);
+        textBlock->setLayout(textLayout);
 
     footerLayout->addWidget(volume);
     footerLayout->addWidget(textBlock);
     footerLayout->addWidget(ButtonsBlock);
 
+    // Store pointers to the labels for later updates
+    footer->setProperty("songNameLabel", QVariant::fromValue(songNameLabel));
+    footer->setProperty("artistLabel", QVariant::fromValue(artistLabel));
+    footer->setProperty("durationLabel", QVariant::fromValue(durationLabel));
+    setUpdateFooterCallback(updateFooter);
     return footer;
 }

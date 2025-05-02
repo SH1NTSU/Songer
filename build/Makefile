@@ -17,7 +17,7 @@ CXX           = g++
 DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_MULTIMEDIA_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -std=gnu++11 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -Imoc -I/../lib64/qt5/mkspecs/linux-g++
+INCPATH       = -I. -I/usr/include/taglib -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtMultimedia -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -Imoc -I/../lib64/qt5/mkspecs/linux-g++
 QMAKE         = /usr/local/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -40,7 +40,7 @@ DISTNAME      = app1.0.0
 DISTDIR = /home/vanitas/Work/Projects/Songer/build/obj/app1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
-LIBS          = $(SUBLIBS) /usr/lib64/libQt5Widgets.so /usr/lib64/libQt5Multimedia.so /usr/lib64/libQt5Gui.so /usr/lib64/libQt5Network.so /usr/lib64/libQt5Core.so -lGL -lpthread   
+LIBS          = $(SUBLIBS) -ltag /usr/lib64/libQt5Widgets.so /usr/lib64/libQt5Multimedia.so /usr/lib64/libQt5Gui.so /usr/lib64/libQt5Network.so /usr/lib64/libQt5Core.so -lGL -lpthread   
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -509,7 +509,8 @@ obj/content_section.o: ../src/content_section.cpp ../headers/content_section.h \
 		../headers/musicplayer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/content_section.o ../src/content_section.cpp
 
-obj/footer_section.o: ../src/footer_section.cpp ../headers/footer_section.h
+obj/footer_section.o: ../src/footer_section.cpp ../headers/footer_section.h \
+		../headers/musicplayer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/footer_section.o ../src/footer_section.cpp
 
 obj/sidebar_section.o: ../src/sidebar_section.cpp ../headers/sidebar_section.h
