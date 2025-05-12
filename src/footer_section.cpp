@@ -9,16 +9,13 @@
 #include <QMediaPlayer>
 #include <iostream>
 
-// Forward declarations
 extern int currentSongIndex;
 extern QList<QJsonObject> songsList;
 
-// Global footer widgets
 static QLabel *songNameLabel = nullptr;
 static QLabel *artistLabel = nullptr;
 static QLabel *durationLabel = nullptr;
 
-// Function to update footer labels
 void updateFooter() {
     if (!songsList.isEmpty() && currentSongIndex >= 0 && currentSongIndex < songsList.size()) {
         const QJsonObject &song = songsList.at(currentSongIndex);
@@ -95,11 +92,12 @@ QFrame* createFooterSection(QWidget *parent ,QMediaPlayer *player) {
     ButtonsBlock->setLineWidth(2);
     ButtonsBlock->setStyleSheet("color: white;");
 
+
+
     QHBoxLayout *ButtonsLayout = new QHBoxLayout;
     QPushButton *favorite = new QPushButton("♥️");
-    QPushButton *loopBtn = new QPushButton(QString::fromUtf8("\U0001F501"));
     QPushButton *startBtn    = new QPushButton(QString::fromUtf8("\u23F9"));
-    QList<QPushButton*> buttons = {favorite, startBtn, loopBtn};
+    QList<QPushButton*> buttons = {favorite, startBtn};
 
     for (QPushButton *btn : buttons) {
         btn->setFixedSize(40, 40);
@@ -121,7 +119,6 @@ QFrame* createFooterSection(QWidget *parent ,QMediaPlayer *player) {
         artistLabel = new QLabel;
         durationLabel = new QLabel;
 
-        // Set initial song info
         updateFooter();
 
         songNameLabel->setStyleSheet("color: white; font-weight: bold;");
@@ -129,7 +126,6 @@ QFrame* createFooterSection(QWidget *parent ,QMediaPlayer *player) {
         durationLabel->setStyleSheet("color: white;");
 
         startButton(startBtn, player);
-        loopButton(loopBtn, player);  // Added coverImageLabel
 
         textLayout->addWidget(songNameLabel);
         textLayout->addWidget(artistLabel);
@@ -140,7 +136,6 @@ QFrame* createFooterSection(QWidget *parent ,QMediaPlayer *player) {
     footerLayout->addWidget(textBlock);
     footerLayout->addWidget(ButtonsBlock);
 
-    // Store pointers to the labels for later updates
     footer->setProperty("songNameLabel", QVariant::fromValue(songNameLabel));
     footer->setProperty("artistLabel", QVariant::fromValue(artistLabel));
     footer->setProperty("durationLabel", QVariant::fromValue(durationLabel));

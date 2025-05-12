@@ -15,10 +15,10 @@
 #include <taglib/audioproperties.h>
 
 
-// Global variables
+static bool isLooping = false;
 int currentSongIndex = 0;
 QList<QJsonObject> songsList;
-void (*updateFooterCallback)() = nullptr;  // Callback function pointer
+void (*updateFooterCallback)() = nullptr;
 
 // Function to set the callback
 void setUpdateFooterCallback(void (*callback)()) {
@@ -76,21 +76,45 @@ void playSong(QMediaPlayer *player, int index, QLabel *coverImage = nullptr) {
         }
     }
 
-    // Call the footer update callback if it exists
     if (updateFooterCallback) {
         updateFooterCallback();
     }
 }
 
 
+
+void setupMediaPlayerConnections(QMediaPlayer *player, QLabel *coverImage) {
+    QObject::disconnect(player, &QMediaPlayer::mediaStatusChanged, nullptr, nullptr);
+
+    QObject::connect(player, &QMediaPlayer::mediaStatusChanged, [=](QMediaPlayer::MediaStatus status) {
+        if (status == QMediaPlayer::LoadedMedia) {
+            updateAudioProperties(player->currentMedia().request().url().toLocalFile(),
+                                  coverImage->parent()->findChild<QLabel*>("mixrateLabel"),
+                                  coverImage->parent()->findChild<QLabel*>("bitrateLabel"));
+        }
+        else if (status == QMediaPlayer::EndOfMedia) {
+            qDebug() << "Media ended. Looping status:" << (isLooping ? "enabled" : "disabled");
+            if (isLooping) {
+                qDebug() << "Looping is enabled, restarting song";
+                player->setPosition(0);
+                player->play();
+            } else {
+                qDebug() << "Looping is disabled, playing next song";
+                int newIndex = currentSongIndex + 1;
+                if (newIndex >= songsList.size()) newIndex = 0;
+                playSong(player, newIndex, coverImage);
+            }
+        }
+    });
+}
+
+
 QWidget* createMusicPlayer(QWidget *parent) {
-    // Load songs data
     loadSongsList();
 
     QWidget *container = new QWidget(parent);
     QVBoxLayout *layout = new QVBoxLayout(container);
 
-    // Create labels for audio properties
     QLabel *mixrateLabel = new QLabel("Sample Rate: N/A | Channels: N/A");
     QLabel *bitrateLabel = new QLabel("Bitrate: N/A");
 
@@ -100,28 +124,22 @@ QWidget* createMusicPlayer(QWidget *parent) {
     layout->addWidget(coverImage, 0, Qt::AlignHCenter);
     coverImage->setObjectName("coverImage");
 
-    // Time label
     QLabel *timeLabel = new QLabel("00:00");
     layout->addWidget(timeLabel, 0, Qt::AlignHCenter);
 
-    // Add audio properties labels to layout
     layout->addWidget(bitrateLabel, 0, Qt::AlignHCenter);
     layout->addWidget(mixrateLabel, 0, Qt::AlignHCenter);
 
-    // Create player
     QMediaPlayer *player = new QMediaPlayer(container);
-
-    // Lambda function to handle song changes
+    setupMediaPlayerConnections(player, coverImage);
     auto updateSongInfo = [=](int index) {
         if (index < 0 || index >= songsList.size()) return;
 
         QJsonObject song = songsList.at(index);
         QString filePath = song["path"].toString();
 
-        // Update audio properties labels
         updateAudioProperties(filePath, mixrateLabel, bitrateLabel);
 
-        // Update cover image if needed
         if (song.contains("image")) {
             QString imagePath = song["image"].toString();
             QPixmap pix(imagePath);
@@ -131,20 +149,17 @@ QWidget* createMusicPlayer(QWidget *parent) {
         }
     };
 
-    // Connect media status changed to update info when song loads
     QObject::connect(player, &QMediaPlayer::mediaStatusChanged, [=](QMediaPlayer::MediaStatus status) {
         if (status == QMediaPlayer::LoadedMedia) {
             updateSongInfo(currentSongIndex);
         }
     });
 
-    // Play first song if available
     if (!songsList.isEmpty()) {
         playSong(player, 0, coverImage);
         updateSongInfo(0);
     }
 
-    // Timer to update time
     QTimer *timer = new QTimer(container);
     QObject::connect(timer, &QTimer::timeout, [=]() {
         int ms = player->position();
@@ -196,25 +211,37 @@ void startButton(QPushButton *button, QMediaPlayer *player) {
     });
 }
 
-void loopButton(QPushButton *button, QMediaPlayer *player) {
-    static bool looping = false;
 
+
+
+
+void loopButton(QPushButton *button, QMediaPlayer *player, QLabel *coverImage) {
     QObject::connect(button, &QPushButton::clicked, [=]() mutable {
-        looping = !looping;
-        button->setText(looping ? "🔁" : "➡️");
+        isLooping = !isLooping;
+        button->setText(isLooping ? "🔁" : "➡️");
+        qDebug() << "Looping is now" << (isLooping ? "enabled" : "disabled");
 
-        // Disconnect any previous connections
+        QObject::disconnect(player, &QMediaPlayer::mediaStatusChanged, nullptr, nullptr);
 
-        if (looping) {
-            QObject::connect(player, &QMediaPlayer::mediaStatusChanged, [=](QMediaPlayer::MediaStatus status) {
-                if (status == QMediaPlayer::EndOfMedia) {
+        QObject::connect(player, &QMediaPlayer::mediaStatusChanged, [=](QMediaPlayer::MediaStatus status) {
+            if (status == QMediaPlayer::EndOfMedia) {
+                qDebug() << "Media ended. Looping status:" << (isLooping ? "enabled" : "disabled");
+                if (isLooping) {
+                    qDebug() << "Looping is enabled, restarting song";
                     player->setPosition(0);
                     player->play();
+                } else {
+                    qDebug() << "Looping is disabled, playing next song";
+                    int newIndex = currentSongIndex + 1;
+                    if (newIndex >= songsList.size()) newIndex = 0;
+                    playSong(player, newIndex, coverImage);
                 }
-            });
-        }
+            }
+        });
     });
 }
+
+
 
 
 void shuffleButton(QPushButton *button, QMediaPlayer *player, QLabel *coverImage) {

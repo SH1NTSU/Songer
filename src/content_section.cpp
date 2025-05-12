@@ -7,19 +7,17 @@
 #include <QFrame>
 #include <QWidget>
 #include <QPushButton>
-#include <QLabel>  // Add this include
+#include <QLabel>
 
 QLayout* createContentSection(QWidget *parent) {
     QHBoxLayout *mainContentLayout = new QHBoxLayout;
     mainContentLayout->setSpacing(10);
     mainContentLayout->setContentsMargins(0, 0, 0, 0);
 
-    // Create music player and get its components
     QWidget *musicPlayerWidget = createMusicPlayer(parent);
     QMediaPlayer *player = musicPlayerWidget->findChild<QMediaPlayer*>();
-    QLabel *coverImageLabel = musicPlayerWidget->findChild<QLabel*>("coverImage"); // Find the song info label
+    QLabel *coverImageLabel = musicPlayerWidget->findChild<QLabel*>("coverImage");
 
-    // Left Section with footer
     QWidget *leftContainer = new QWidget;
     QVBoxLayout *leftContainerLayout = new QVBoxLayout(leftContainer);
     leftContainerLayout->setSpacing(10);
@@ -63,25 +61,25 @@ QLayout* createContentSection(QWidget *parent) {
     QPushButton *pauseBtn = new QPushButton(QString::fromUtf8("\u23F8"));
     QPushButton *playBtn = new QPushButton(QString::fromUtf8("\u25B6"));
     QPushButton *nextBtn = new QPushButton(QString::fromUtf8("\u23ED"));
+    QPushButton *loopBtn = new QPushButton(QString::fromUtf8("\U0001F501"));
     QPushButton *shuffleBtn = new QPushButton(QString::fromUtf8("\xF0\x9F\x94\x80"));
-    QList<QPushButton*> buttons = { prevBtn, pauseBtn, playBtn, nextBtn, shuffleBtn };
+    QList<QPushButton*> buttons = { prevBtn, pauseBtn, playBtn, nextBtn, shuffleBtn, loopBtn };
     for (QPushButton* btn : buttons) {
         btn->setStyleSheet(buttonStyle);
         controlsLayout->addWidget(btn);
     }
 
-    // Connect buttons with all required parameters
     connectPlayButton(playBtn, player);
     connectPauseButton(pauseBtn, player);
-    connectPrevButton(prevBtn, player, coverImageLabel);  // Added coverImageLabel
-    connectNextButton(nextBtn, player, coverImageLabel);  // Added coverImageLabel
-    shuffleButton(shuffleBtn, player, coverImageLabel);  // Added coverImageLabel
+    connectPrevButton(prevBtn, player, coverImageLabel);
+    connectNextButton(nextBtn, player, coverImageLabel);
+    shuffleButton(shuffleBtn, player, coverImageLabel);
+    loopButton(loopBtn, player, coverImageLabel);
 
     controls->setLayout(controlsLayout);
     contentLayout->addWidget(controls);
     contentLayout->addWidget(musicPlayerWidget);  // Use the existing widget instead of creating new one
 
-    // Add main content to layout
     leftContainerLayout->addWidget(contentFrame, 8);
     leftContainerLayout->addWidget(createFooterSection(parent, player), 2);
 

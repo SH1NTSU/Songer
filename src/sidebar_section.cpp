@@ -29,21 +29,21 @@ QFrame* createSidebar(QWidget *parent) {
         "   background-color: #2D4F8B;"
         "}"
     );
-    
+
     QVBoxLayout *sidebarLayout = new QVBoxLayout(sidebar);
     sidebarLayout->setContentsMargins(10, 10, 10, 10);
     sidebarLayout->setSpacing(10);
-    
+
     // Sidebar title
     QLabel *sidebarTitle = new QLabel("Playlists");
     sidebarLayout->addWidget(sidebarTitle);
-    
+
     // Playlist list
     QListWidget *playlistWidget = new QListWidget;
     playlistWidget->addItems({"Favorites", "Recently Played", "Workout Mix", "Chill Vibes"});
     sidebarLayout->addWidget(playlistWidget);
-    
-    // Add playlist button
+
+    // playlist button
     QPushButton *addPlaylistButton = new QPushButton("+ Add Playlist");
     addPlaylistButton->setStyleSheet(
         "QPushButton {"
@@ -58,11 +58,11 @@ QFrame* createSidebar(QWidget *parent) {
         "}"
     );
     sidebarLayout->addWidget(addPlaylistButton);
-    
+
     sidebarLayout->addStretch();
-    
+
     // Set fixed width
     sidebar->setFixedWidth(parent->width() * 0.15);
-    
+
     return sidebar;
 }

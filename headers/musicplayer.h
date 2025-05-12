@@ -8,16 +8,15 @@
 
 extern int currentSongIndex;
 extern QList<QJsonObject> songsList;
-extern void (*updateFooterCallback)();  // Declare callback function pointer
-
+extern void (*updateFooterCallback)();
 QWidget* createMusicPlayer(QWidget *parent = nullptr);
 void connectPlayButton(QPushButton *button, QMediaPlayer *player);
 void connectPauseButton(QPushButton *button, QMediaPlayer *player);
 void connectPrevButton(QPushButton *button, QMediaPlayer *player, QLabel *coverImage);
 void connectNextButton(QPushButton *button, QMediaPlayer *player, QLabel *coverImage);
 void shuffleButton(QPushButton *button, QMediaPlayer *player, QLabel *coverImage);
-void loopButton(QPushButton *button, QMediaPlayer *player);
+void loopButton(QPushButton *button, QMediaPlayer *player, QLabel *coverImag);
 void startButton(QPushButton *button, QMediaPlayer *player);
-void setUpdateFooterCallback(void (*callback)());  // Function to set the callback
+void setUpdateFooterCallback(void (*callback)());
 
-#endif // MUSICPLAYER_H
+#endif
